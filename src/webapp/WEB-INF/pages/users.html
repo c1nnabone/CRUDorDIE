@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table border="1" cellspacing="3" cellpadding="3">
+    <tbody>
+    <tr>
+        <td>id</td>
+        <td>Name</td>
+        <td>LastName</td>
+        <td>Age</td>
+        <td>Edit</td>
+        <td>Delete</td>
+    </tr>
+    <tr th:each="user : ${users}">
+        <td><p th:text="${user.getId()}">user</p></td>
+        <td><p th:text="${user.getName()}">user</p></td>
+        <td><p th:text="${user.getLastName()}">user</p></td>
+        <td><p th:text="${user.getAge()}">user</p></td>
+        <td><a th:href="@{/users/edit(id=${user.getId()})}">Edit</a></td>
+        <td><a th:href="@{/users/delete(id=${user.getId()})}">Delete</a></td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>
