@@ -13,8 +13,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Properties;
 
 
@@ -43,35 +41,30 @@ public class AppConfig {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-        LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        final LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+        final HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
         em.setDataSource(getDataSource());
         em.setPackagesToScan(env.getProperty("db.entity.package"));
-        em.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
-        em.setJpaProperties(getHigernateProperties());
+        em.setJpaVendorAdapter(vendorAdapter);
+        em.setJpaProperties(jpaProperties());
         return em;
     }
 
-//    @Bean
-//    public PlatformTransactionManager getTransactionManager() {
-//        JpaTransactionManager manager = new JpaTransactionManager();
-//        manager.setEntityManagerFactory(entityManagerFactory().getObject());
-//        return manager;
-//    }
     @Bean
-    public JpaTransactionManager transactionManager() {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory().getObject());
-        return transactionManager;
+    public Properties jpaProperties() {
+        final Properties properties = new Properties();
+        properties.put("hibernate.hbm2ddl.auto", env.getRequiredProperty("hibernate.hbm2ddl.auto"));
+        properties.put("hibernate.format_sql", env.getRequiredProperty("hibernate.format_sql"));
+        properties.put("hibernate.show_sql", env.getRequiredProperty("hibernate.show_sql"));
+        properties.put("hibernate.dialect", env.getRequiredProperty("hibernate.dialect"));
+        return properties;
     }
 
-    public Properties getHigernateProperties() {
-        try {
-            Properties properties = new Properties();
-            InputStream input = getClass().getClassLoader().getResourceAsStream("hibernate.properties");
-            properties.load(input);
-            return properties;
-        } catch (IOException e) {
-            throw new IllegalArgumentException("Cannot find file with properties", e);
-        }
+    @Bean
+    public PlatformTransactionManager getTransactionManager() {
+        JpaTransactionManager manager = new JpaTransactionManager();
+        manager.setEntityManagerFactory(entityManagerFactory().getObject());
+        return manager;
     }
+
 }

@@ -21,11 +21,7 @@ public class UserController {
         model.addAttribute("users", userService.getUsers());
         return "users";
     }
-//    @GetMapping()
-//    public String getUserById(@RequestParam(value = "id", required = false) Long id, ModelMap model) {
-//        model.addAttribute("users", userService.getUserById(id));
-//        return "users";
-//    }
+
     @GetMapping("/new")
     public String newUser(Model model) {
         model.addAttribute("user", new User());
@@ -41,17 +37,18 @@ public class UserController {
     @GetMapping("/edit")
     public String getEditableUser(@RequestParam(value = "id") Long id, Model model) {
         model.addAttribute("usertoupdate", userService.getUserById(id));
-        model.addAttribute("userId", id);
         return "edit";
     }
-    @PostMapping("/edit(id=${user.getId()})")
-    public String editUser(@RequestParam(value = "id") Long id, @ModelAttribute("usertoupdate") User user) {
-        userService.updateUser(userService.getUserById(id));
+
+    @PostMapping("/edit")
+    public String editUser(@ModelAttribute("usertoupdate") User user) {
+        userService.updateUser(user);
         return "redirect:/users";
     }
-    @PostMapping("/delete(id=${user.getId()})")
+
+    @PostMapping("/delete")
     public String deleteUser(@RequestParam(value = "id") Long id) {
-        userService.removeUser(userService.getUserById(id));
+        userService.removeById(id);
         return "redirect:/users";
     }
 }

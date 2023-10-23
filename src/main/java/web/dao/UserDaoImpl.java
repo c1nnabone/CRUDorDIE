@@ -6,11 +6,10 @@ import web.entity.User;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
-public class UserDaoImpl implements UserDao{
+public class UserDaoImpl implements UserDao {
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -21,6 +20,7 @@ public class UserDaoImpl implements UserDao{
     @Override
     public void addUser(User user) {
         entityManager.persist(user);
+        entityManager.flush();
     }
 
     @Override
@@ -30,8 +30,9 @@ public class UserDaoImpl implements UserDao{
     }
 
     @Override
-    public void removeUser(User user) {
-        entityManager.remove(user);
+    public void removeById(Long id) {
+        entityManager.remove(getUserById(id));
+        entityManager.flush();
     }
 
     @Override
